@@ -1,0 +1,24 @@
+language: bash
+services: docker
+
+matrix:
+  include:
+    - os: linux
+      env: VERSION=v0.8.1 VARIANT=alpine3.9
+
+before_script:
+  - env | sort
+  - cd "$VERSION${VARIANT:+/$VARIANT}"
+  - slash='/'; image="grahamar/operator-sdk:$VERSION${VARIANT:+-${VARIANT//$slash/-}}"
+
+script:
+  - |
+    (
+      set -Eeuo pipefail
+      set -x
+      docker build -t "$image" .
+    )
+after_script:
+  - docker images
+
+# vim:set et ts=2 sw=2:
